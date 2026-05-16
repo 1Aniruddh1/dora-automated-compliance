@@ -1,0 +1,204 @@
+{
+  "articles": [
+    {
+      "id": "5",
+      "label": "Article 5",
+      "title": "Governance & Organisation",
+      "text": "The management body of the financial entity shall define, approve, oversee and be responsible for the implementation of all arrangements related to the ICT risk management framework. The management body shall bear the ultimate responsibility for managing the entity's ICT risk, and shall define, approve and oversee the entity's digital operational resilience strategy. It shall allocate an appropriate budget to fulfil the entity's digital operational resilience needs and set appropriate risk tolerance levels for ICT risk.",
+      "risks": [
+        "Board fails to formally own ICT risk, creating accountability gaps",
+        "Inadequate budget allocation leaves resilience needs unmet",
+        "Risk tolerance undefined, exposing entity to unmanaged ICT threats",
+        "Management body lacks ICT expertise to discharge oversight duties",
+        "Digital resilience strategy not reviewed annually, causing regulatory drift"
+      ],
+      "controls": [
+        "Board adopts a formal Digital Operational Resilience Strategy annually",
+        "Appoint a dedicated CISO with board-level reporting line",
+        "Embed ICT risk tolerance thresholds in the enterprise risk appetite statement",
+        "Ring-fence a dedicated ICT resilience budget approved by senior management",
+        "Conduct annual board-level training on DORA obligations"
+      ]
+    },
+    {
+      "id": "6",
+      "label": "Article 6",
+      "title": "ICT Risk Management Framework",
+      "text": "Financial entities shall have a sound, comprehensive and well-documented ICT risk management framework as part of their overall risk management system, which enables them to address ICT risk quickly, efficiently and comprehensively. Financial entities, other than microenterprises, shall assign the responsibility for managing and overseeing ICT risk to a control function and ensure an appropriate level of independence of such control function in order to avoid conflicts of interest. The ICT risk management framework shall be subject to internal audit by auditors on a regular basis.",
+      "risks": [
+        "Absence of documented ICT risk framework exposes firm to regulatory censure",
+        "Conflicts of interest when risk and control functions share responsibilities",
+        "Outdated risk tolerance levels leave the firm blind to new threat vectors",
+        "Inadequate audit segregation increases operational exposure",
+        "Failure of periodic internal audit triggers supervisory investigation"
+      ],
+      "controls": [
+        "Publish a documented ICT Risk Management Framework with board sign-off",
+        "Establish three-lines-of-defence with independent ICT control function",
+        "Define and annually review risk and impact tolerance thresholds with KPIs",
+        "Schedule annual independent internal audits of the ICT risk framework",
+        "Implement a formal remediation process for critical audit findings"
+      ]
+    },
+    {
+      "id": "8",
+      "label": "Article 8",
+      "title": "Identification of ICT Risks",
+      "text": "Financial entities shall identify, classify and adequately document all ICT supported business functions, roles and responsibilities, the information assets and ICT assets supporting those functions, and their roles and dependencies in relation to ICT risk. Financial entities shall identify all sources of ICT risk, in particular the risk exposure to and from other financial entities, and assess relevant cyber threats and ICT vulnerabilities relevant to their ICT supported business functions, information assets and ICT assets.",
+      "risks": [
+        "Unclassified ICT assets create blind spots in risk identification",
+        "Unknown interdependencies amplify impact of ICT failures",
+        "Failure to track third-party exposure leads to supply-chain threats",
+        "Missing asset register prevents accurate business impact assessments",
+        "Legacy systems introduce unidentified cyber vulnerabilities"
+      ],
+      "controls": [
+        "Maintain a comprehensive continuously updated ICT asset inventory",
+        "Map all business functions to supporting ICT assets and data flows",
+        "Conduct bi-annual threat and vulnerability assessments across critical systems",
+        "Implement automated discovery tools to detect unregistered ICT assets",
+        "Establish a formal process to track and evaluate third-party ICT dependencies"
+      ]
+    },
+    {
+      "id": "9",
+      "label": "Article 9",
+      "title": "Protection & Prevention",
+      "text": "Financial entities shall have in place appropriate and comprehensive ICT security policies, procedures, protocols and tools that aim to ensure the resilience, continuity and availability of ICT systems and to maintain high standards of availability, authenticity, integrity and confidentiality of data, whether at rest, in use or in transit. Financial entities shall design network infrastructure connections to be redundant and shall ensure that all identified risks are adequately mitigated.",
+      "risks": [
+        "Inadequate encryption exposes data in transit to interception",
+        "Absence of network redundancy creates single points of failure",
+        "Weak access controls allow unauthorised access to sensitive assets",
+        "Outdated security policies fail to address emerging cyber threats",
+        "No integrity monitoring enables undetected tampering of critical data"
+      ],
+      "controls": [
+        "Implement end-to-end encryption for all data in transit and at rest",
+        "Deploy redundant network paths and geographically diverse data centres",
+        "Enforce role-based access control with privileged access management",
+        "Review and update ICT security policies at least annually",
+        "Deploy continuous integrity monitoring across all critical ICT systems"
+      ]
+    },
+    {
+      "id": "11",
+      "label": "Article 11",
+      "title": "Response & Recovery",
+      "text": "As part of their ICT risk management framework, financial entities shall put in place a comprehensive ICT business continuity policy, which may be adopted as a dedicated specific policy, forming an integral part of the overall business continuity policy of the financial entity. The policy shall address scenarios of severe business disruptions and aim to ensure that all necessary components are in place to allow the financial entity to effectively respond to and recover from ICT disruptions.",
+      "risks": [
+        "Absence of a tested BCP leaves entity unable to recover from disruptions",
+        "Undocumented recovery scenarios result in ad hoc crisis responses",
+        "Failure to activate continuity plans exposes entity to prolonged outages",
+        "Untested RTOs may be unachievable under real conditions",
+        "No cross-functional ownership of continuity plans creates accountability gaps"
+      ],
+      "controls": [
+        "Develop and maintain a documented ICT Business Continuity Policy",
+        "Define and test RTOs and RPOs annually for all critical functions",
+        "Conduct full business continuity simulation exercises at least once per year",
+        "Assign continuity ownership to senior managers for each critical function",
+        "Integrate ICT continuity plans with the enterprise-wide BCP framework"
+      ]
+    },
+    {
+      "id": "12",
+      "label": "Article 12",
+      "title": "Backup & Recovery Policies",
+      "text": "Financial entities shall implement ICT backup policies and procedures specifying the scope of the data subject to the backup and the minimum frequency of the backup, based on the criticality of information or the confidentiality level of the data. Financial entities shall also implement ICT recovery procedures and recovery methods. When restoring backup data using own systems, financial entities shall use ICT systems that are physically and logically segregated from the source ICT system.",
+      "risks": [
+        "Infrequent backups create large data loss windows in the event of failure",
+        "Backups stored on same systems risk simultaneous loss during an incident",
+        "Unverified backup integrity leads to failed recovery when needed most",
+        "No documented restoration procedures cause delays during crises",
+        "Ransomware may corrupt all backup copies if not segregated"
+      ],
+      "controls": [
+        "Define backup frequency based on data criticality with minimum thresholds",
+        "Store backups on physically and logically segregated immutable systems",
+        "Test backup restoration quarterly and document results with sign-off",
+        "Maintain written ICT recovery procedures accessible offline in crises",
+        "Implement air-gapped offsite backup copies for all critical data sets"
+      ]
+    },
+    {
+      "id": "17",
+      "label": "Article 17",
+      "title": "ICT Incident Management",
+      "text": "Financial entities shall define, establish and implement an ICT-related incident management process to detect, manage and notify ICT-related incidents. Financial entities shall record all ICT-related incidents and significant cyber threats. Financial entities shall put in place appropriate procedures and processes to ensure a consistent and integrated monitoring, handling and follow-up of ICT-related incidents, and to ensure that root causes are identified and addressed so as to prevent the recurrence of such incidents.",
+      "risks": [
+        "Undetected ICT incidents escalate into major disruptions before containment",
+        "Inconsistent incident classification causes regulatory reporting failures",
+        "Lack of root cause analysis results in recurring incidents",
+        "Absence of incident logs prevents post-incident regulatory evidence",
+        "No formal escalation paths delay senior management notification"
+      ],
+      "controls": [
+        "Establish 24/7 ICT incident detection and monitoring with defined thresholds",
+        "Implement an incident classification taxonomy aligned with DORA categories",
+        "Enforce mandatory root cause analysis for all significant ICT incidents",
+        "Maintain tamper-proof incident logs for the minimum regulatory retention period",
+        "Define escalation matrices with response SLAs for each incident severity level"
+      ]
+    },
+    {
+      "id": "26",
+      "label": "Article 26",
+      "title": "Advanced Testing (TLPT)",
+      "text": "Financial entities identified by competent authorities shall carry out at least every 3 years advanced testing by means of threat-led penetration testing (TLPT). This testing shall cover several or all critical or important functions of a financial entity, and shall be performed on live production systems supporting such functions. Financial entities shall maintain full control over the entire TLPT process and shall ensure that appropriate risk mitigations are in place to avoid any adverse impact.",
+      "risks": [
+        "Untested resilience leaves critical systems vulnerable to sophisticated actors",
+        "Failure to conduct TLPT every 3 years breaches DORA obligations",
+        "Testing on non-production systems fails to identify real-world vulnerabilities",
+        "Inadequate scope exclusions leave critical functions outside the test perimeter",
+        "Poor coordination with competent authorities invalidates TLPT outcomes"
+      ],
+      "controls": [
+        "Schedule TLPT exercises at least every 3 years using accredited external testers",
+        "Conduct testing on live production systems supporting all critical functions",
+        "Agree TLPT scope in advance with the relevant competent authority",
+        "Implement a formal remediation plan to address all findings within agreed timelines",
+        "Maintain comprehensive documentation of each TLPT exercise and mitigations"
+      ]
+    },
+    {
+      "id": "28",
+      "label": "Article 28",
+      "title": "Third-Party ICT Risk",
+      "text": "Financial entities shall manage ICT third-party risk as an integral component of ICT risk within their ICT risk management framework. Financial entities shall adopt and regularly review a strategy on ICT third-party risk, including a policy on the use of ICT services supporting critical or important functions provided by ICT third-party service providers. Financial entities shall maintain an up-to-date register of information in relation to all contractual arrangements on the use of ICT services.",
+      "risks": [
+        "Undocumented ICT third-party arrangements create unmonitored risk exposure",
+        "Concentration risk from a single ICT provider threatens operational resilience",
+        "Failure to conduct due diligence allows non-resilient vendors into supply chain",
+        "Absence of an ICT third-party register breaches DORA reporting requirements",
+        "No exit strategy for critical ICT providers creates vendor lock-in risk"
+      ],
+      "controls": [
+        "Maintain a comprehensive up-to-date register of all ICT third-party arrangements",
+        "Establish a formal due diligence and onboarding process for all ICT providers",
+        "Assess and document concentration risk across all critical ICT providers annually",
+        "Develop and test exit strategies and transition plans for critical ICT providers",
+        "Include DORA-required audit and inspection rights in all ICT third-party contracts"
+      ]
+    },
+    {
+      "id": "30",
+      "label": "Article 30",
+      "title": "Key Contractual Provisions",
+      "text": "The rights and obligations of the financial entity and of the ICT third-party service provider shall be clearly allocated and set out in writing. Contractual arrangements shall include at minimum: a clear and complete description of all functions and ICT services to be provided; the locations where such services are to be provided; provisions on data portability and availability, return and secure deletion of data; service level descriptions including updates and revisions; relevant provisions on ICT security, including access rights, incident reporting and audit rights.",
+      "risks": [
+        "Contracts lacking DORA clauses create unenforceable service obligations",
+        "Absent data portability provisions cause vendor lock-in post-exit",
+        "No defined service levels make it impossible to measure ICT resilience",
+        "Missing incident reporting clauses prevent timely notification of third-party breaches",
+        "Failure to include audit rights bars the entity from regulatory inspections"
+      ],
+      "controls": [
+        "Include full DORA-mandated clauses in all new and renewed ICT contracts",
+        "Mandate data portability, return and secure deletion provisions in all agreements",
+        "Define measurable SLAs covering availability, performance and security standards",
+        "Require ICT providers to notify the entity of incidents within agreed timeframes",
+        "Retain unrestricted audit and inspection rights over all critical ICT providers"
+      ]
+    }
+  ]
+}
