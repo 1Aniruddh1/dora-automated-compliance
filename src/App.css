@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inclusive+Sans:ital,wght@0,300..700;1,300..700&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
 
-/* ── Reset & base ─────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -16,7 +15,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Layout ───────────────────────────────────────────────── */
+
 .app {
   min-height: 100vh;
   display: flex;
@@ -30,7 +29,7 @@ body {
   padding: 0 16px;
 }
 
-/* ── Header ───────────────────────────────────────────────── */
+/* Header */
 .header {
   background: #ffffff;
   padding: 20px 16px;
@@ -88,7 +87,7 @@ body {
   white-space: nowrap;
 }
 
-/* ── Main body ────────────────────────────────────────────── */
+/* Main body */
 .main {
   flex: 1;
   padding: 20px 16px 48px;
@@ -102,7 +101,7 @@ body {
   gap: 14px;
 }
 
-/* ── Section card ─────────────────────────────────────────── */
+/* main section */
 .card {
   background: #fff;
   border-radius: 14px;
@@ -188,7 +187,7 @@ body {
   padding: 16px;
 }
 
-/* ── Step progress ────────────────────────────────────────── */
+
 .steps {
   display: flex;
   align-items: center;
@@ -250,7 +249,7 @@ body {
   flex-shrink: 0;
 }
 
-/* ── Dropdown ─────────────────────────────────────────────── */
+/* dropdown menu */
 .field {
   display: flex;
   flex-direction: column;
@@ -358,14 +357,14 @@ body {
   font-weight: 600;
 }
 
-/* ── Fields grid ──────────────────────────────────────────── */
+
 .fields-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
 }
 
-/* ── Analyze button ───────────────────────────────────────── */
+
 .analyze-btn {
   width: 100%;
   padding: 13px 20px;
@@ -396,7 +395,7 @@ body {
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
 }
 
-/* ── Spinner ──────────────────────────────────────────────── */
+
 .spinner {
   width: 16px;
   height: 16px;
@@ -442,7 +441,7 @@ body {
   }
 }
 
-/* ── Article strip ────────────────────────────────────────── */
+
 .article-strip {
   display: flex;
   flex-wrap: wrap;
@@ -478,7 +477,7 @@ body {
   white-space: nowrap;
 }
 
-/* ── Flow list ────────────────────────────────────────────── */
+
 .flow-list {
   display: flex;
   flex-direction: column;
@@ -519,7 +518,7 @@ body {
   color: #334155;
 }
 
-/* ── Skeleton ─────────────────────────────────────────────── */
+
 .skeleton-card {
   background: #fff;
   border-radius: 14px;
@@ -547,7 +546,7 @@ body {
   gap: 8px;
 }
 
-/* ── Empty state ──────────────────────────────────────────── */
+
 .empty-state {
   text-align: center;
   padding: 40px 20px;
@@ -582,7 +581,7 @@ body {
   line-height: 1.6;
 }
 
-/* ── Error banner ─────────────────────────────────────────── */
+
 .error-banner {
   display: flex;
   align-items: flex-start;
@@ -595,7 +594,7 @@ body {
   color: #991b1b;
 }
 
-/* ── Demo form ────────────────────────────────────────────── */
+
 .demo-form {
   background: #0d1f35;
   border-radius: 14px;
@@ -710,7 +709,26 @@ body {
   margin: 0;
 }
 
-/* ── Footer ───────────────────────────────────────────────── */
+.demo-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #fca5a5;
+  margin-bottom: 10px;
+}
+
+.demo-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Footer */
 .footer {
   text-align: center;
   font-size: 11px;
@@ -718,12 +736,12 @@ body {
   padding: 8px 0;
 }
 
-/* ── Animated result card ─────────────────────────────────── */
+
 .result-card {
   animation: fadeUp 0.35s ease forwards;
 }
 
-/* ── Loading indicator ────────────────────────────────────── */
+/* loading */
 .loading-row {
   display: flex;
   align-items: center;
@@ -734,9 +752,7 @@ body {
   color: #64748b;
 }
 
-/* ══════════════════════════════════════════════════════════
-   RESPONSIVE  –  mobile first
-══════════════════════════════════════════════════════════ */
+/* mobile responsive */
 @media (max-width: 600px) {
   .header {
     padding: 14px 16px;
@@ -754,7 +770,7 @@ body {
     gap: 12px;
   }
 
-  /* Steps: show only icons on very small screens */
+
   .steps {
     gap: 4px;
   }
@@ -772,18 +788,17 @@ body {
     width: 10px;
   }
 
-  /* Dropdowns stack vertically */
   .fields-grid {
     grid-template-columns: 1fr;
     gap: 10px;
   }
 
-  /* Demo form inputs stack */
+
   .demo-form-grid {
     grid-template-columns: 1fr;
   }
 
-  /* Article strip wraps */
+
   .article-ref {
     display: none;
   }

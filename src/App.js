@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
-// react-icons
+// reactmd icons
 import {
   MdShield,
   MdPublic,
@@ -20,9 +20,7 @@ import {
 
 const JSON_URL = "/dora_compliance_data.json";
 
-/* ─────────────────────────────────────────────────────────────
-   Dropdown
-───────────────────────────────────────────────────────────── */
+
 function Dropdown({ label, icon: Icon, value, onChange, options, disabled }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -77,9 +75,7 @@ function Dropdown({ label, icon: Icon, value, onChange, options, disabled }) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Result Card
-───────────────────────────────────────────────────────────── */
+
 function ResultCard({ iconClass, Icon, title, badge, badgeClass, children, style }) {
   return (
     <div className="card result-card" style={style}>
@@ -97,9 +93,7 @@ function ResultCard({ iconClass, Icon, title, badge, badgeClass, children, style
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Flow List
-───────────────────────────────────────────────────────────── */
+
 function FlowList({ items, dotClass }) {
   return (
     <div className="flow-list">
@@ -113,9 +107,7 @@ function FlowList({ items, dotClass }) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Skeleton
-───────────────────────────────────────────────────────────── */
+
 function Skeleton() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -135,19 +127,49 @@ function Skeleton() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Demo Form
-───────────────────────────────────────────────────────────── */
+
+// sheetsdb api
+const SHEETSDB_URL = "https://sheetdb.io/api/v1/v3npu5mie2tu6";
+
 function DemoForm() {
   const [form, setForm] = useState({ name: "", email: "", org: "", role: "" });
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | submitting | success | error
+  const [errorMsg, setErrorMsg] = useState("");
 
   const fields = [
-    { key: "name",  placeholder: "Full name",     type: "text"  },
-    { key: "email", placeholder: "Work email",    type: "email" },
-    { key: "org",   placeholder: "Organisation",  type: "text"  },
-    { key: "role",  placeholder: "Your role",     type: "text"  },
+    { key: "name", placeholder: "Full name", type: "text" },
+    { key: "email", placeholder: "Work email", type: "email" },
+    { key: "org", placeholder: "Organisation", type: "text" },
+    { key: "role", placeholder: "Your role", type: "text" },
   ];
+
+  async function handleSubmit() {
+    if (!form.name || !form.email) return;
+    setStatus("submitting");
+    setErrorMsg("");
+
+    try {
+      const res = await fetch(SHEETSDB_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          data: [{
+            Name: form.name,
+            Email: form.email,
+            Organisation: form.org,
+            Role: form.role,
+            Timestamp: new Date().toISOString(),
+          }],
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+      setStatus("success");
+    } catch (err) {
+      setErrorMsg(err.message || "Something went wrong. Please try again.");
+      setStatus("error");
+    }
+  }
 
   return (
     <div className="demo-form">
@@ -155,7 +177,7 @@ function DemoForm() {
       <h3>Ready for full DORA compliance?</h3>
       <p>Book a personalised demo with our regulatory specialists.</p>
 
-      {submitted ? (
+      {status === "success" ? (
         <div className="demo-success">
           <MdCheckCircle className="demo-success-icon" size={22} />
           <div>
@@ -174,16 +196,35 @@ function DemoForm() {
                 value={form[key]}
                 onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
                 className="demo-input"
+                disabled={status === "submitting"}
               />
             ))}
           </div>
+
+          {status === "error" && (
+            <div className="demo-error">
+              <MdErrorOutline size={15} style={{ flexShrink: 0 }} />
+              {errorMsg}
+            </div>
+          )}
+
           <button
             className="demo-submit"
-            onClick={() => { if (form.name && form.email) setSubmitted(true); }}
+            onClick={handleSubmit}
+            disabled={status === "submitting" || !form.name || !form.email}
             type="button"
           >
-            <MdSend size={15} />
-            Book a Demo
+            {status === "submitting" ? (
+              <>
+                <div className="spinner" style={{ width: 14, height: 14 }} />
+                Sending…
+              </>
+            ) : (
+              <>
+                <MdSend size={15} />
+                Book a Demo
+              </>
+            )}
           </button>
         </>
       )}
@@ -191,22 +232,20 @@ function DemoForm() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Main App
-───────────────────────────────────────────────────────────── */
-export default function DORAComplianceTool() {
-  const [articles, setArticles]       = useState([]);
-  const [dataLoading, setDataLoading] = useState(true);
-  const [dataError, setDataError]     = useState("");
 
-  const [region,     setRegion]     = useState("");
+export default function DORAComplianceTool() {
+  const [articles, setArticles] = useState([]);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [dataError, setDataError] = useState("");
+
+  const [region, setRegion] = useState("");
   const [regulation, setRegulation] = useState("");
-  const [ruleId,     setRuleId]     = useState("");
+  const [ruleId, setRuleId] = useState("");
 
   const [analyzing, setAnalyzing] = useState(false);
-  const [result,    setResult]    = useState(null);
+  const [result, setResult] = useState(null);
 
-  /* ── Fetch JSON ─────────────────────────────────────────── */
+  /* load json*/
   useEffect(() => {
     fetch(JSON_URL)
       .then((res) => {
@@ -220,43 +259,43 @@ export default function DORAComplianceTool() {
       });
   }, []);
 
-  /* ── Derived ────────────────────────────────────────────── */
-  const article    = articles.find((a) => a.id === ruleId) ?? null;
+
+  const article = articles.find((a) => a.id === ruleId) ?? null;
   const canAnalyze = !!(region && regulation && ruleId && !dataLoading);
 
-  const regionOptions     = [{ value: "eu",   label: "🇪🇺  European Union" }];
+  const regionOptions = [{ value: "eu", label: "🇪🇺  European Union" }];
   const regulationOptions = [{ value: "dora", label: "DORA — Digital Operational Resilience Act" }];
-  const ruleOptions       = articles.map((a) => ({ value: a.id, label: `${a.label} — ${a.title}` }));
+  const ruleOptions = articles.map((a) => ({ value: a.id, label: `${a.label} — ${a.title}` }));
 
   const steps = [
-    { n: 1, label: "Region",     done: !!region },
+    { n: 1, label: "Region", done: !!region },
     { n: 2, label: "Regulation", done: !!regulation },
-    { n: 3, label: "Article",    done: !!ruleId },
+    { n: 3, label: "Article", done: !!ruleId },
   ];
 
-  /* ── AI call ────────────────────────────────────────────── */
+  /* optional npl integration */
   async function analyze() {
     if (!canAnalyze || !article) return;
     setAnalyzing(true);
     setResult(null);
 
-    const prompt = `You are a DORA compliance expert. For ${article.label} – ${article.title}, return ONLY a JSON object (no markdown, no backticks):
+    const prompt = `You are a dora compliance expert. For ${article.label} – ${article.title}, return ONLY a JSON object (no markdown, no backticks):
 {"risks":["risk1","risk2","risk3","risk4","risk5"],"controls":["control1","control2","control3","control4","control5"]}
 Article text: "${article.text}"
 Keep each item under 20 words. Risks = compliance/operational failures. Controls = concrete governance actions.`;
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch("XXXXXXXXXXX", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "XXXXXXXXXX",
           max_tokens: 1000,
           messages: [{ role: "user", content: prompt }],
         }),
       });
       const data = await res.json();
-      const raw  = data.content.map((c) => c.text || "").join("").replace(/```json|```/g, "").trim();
+      const raw = data.content.map((c) => c.text || "").join("").replace(/```json|```/g, "").trim();
       setResult(JSON.parse(raw));
     } catch {
       setResult({ risks: article.risks, controls: article.controls });
@@ -265,10 +304,10 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
     }
   }
 
-  /* ── Render ─────────────────────────────────────────────── */
+  /* rendering */
   return (
     <div className="app">
-      {/* ── Header ── */}
+      {/*  header  */}
       <header className="header">
         <div className="header-inner">
           <img
@@ -280,7 +319,7 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
         </div>
       </header>
 
-      {/* ── Main ── */}
+      {/* Main */}
       <main className="main">
         <div className="main-inner">
 
@@ -427,7 +466,7 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
             </div>
           )}
 
-          {/* Empty state */}
+          {/* empty state */}
           {!result && !analyzing && (
             <div className="empty-state">
               <div className="empty-icon">
@@ -441,7 +480,7 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
             </div>
           )}
 
-          {/* Demo form */}
+          {/* contact demo form */}
           <DemoForm />
 
           <p className="footer">
