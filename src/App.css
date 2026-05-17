@@ -20,6 +20,18 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* animated polygon background */
+.polygon-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .container {
@@ -34,6 +46,8 @@ body {
   background: #ffffff;
   padding: 20px 16px;
   border-bottom: 4px solid rgb(8, 29, 98);
+  position: relative;
+  z-index: 1;
 }
 
 .header-inner {
@@ -91,6 +105,8 @@ body {
 .main {
   flex: 1;
   padding: 20px 16px 48px;
+  position: relative;
+  z-index: 1;
 }
 
 .main-inner {
@@ -254,6 +270,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  min-width: 0;
 }
 
 .field-label {
@@ -287,6 +304,7 @@ body {
   color: #1a2b3c;
   transition: border-color 0.2s, box-shadow 0.2s;
   text-align: left;
+  overflow: hidden;
 }
 
 .dropdown-btn:hover:not(:disabled) {
@@ -379,7 +397,7 @@ body {
   justify-content: center;
   gap: 8px;
   transition: all 0.25s;
-  background: linear-gradient(135deg, #1e3c5a 0%, #2563eb 100%);
+  background: #264fab;
   color: #fff;
 }
 

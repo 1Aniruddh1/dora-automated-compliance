@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "./App.css";
 
 // reactmd icons
@@ -19,6 +19,91 @@ import {
 } from "react-icons/md";
 
 const JSON_URL = "/dora_compliance_data.json";
+
+
+function PolygonBackground() {
+  const canvasRef = useRef(null);
+  const animRef = useRef(null);
+
+  const init = useCallback((canvas) => {
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width;
+    const H = canvas.height;
+    const NODE_COUNT = Math.floor((W * H) / 22000);
+    const MAX_DIST = 180;
+
+    const nodes = Array.from({ length: NODE_COUNT }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.45,
+      vy: (Math.random() - 0.5) * 0.45,
+      r: Math.random() * 2 + 1.5,
+    }));
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Draw connecting lines
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < MAX_DIST) {
+            const alpha = (1 - dist / MAX_DIST) * 0.18;
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(37, 99, 235, ${alpha})`;
+            ctx.lineWidth = 0.8;
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw nodes
+      for (const node of nodes) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(37, 99, 235, 0.25)";
+        ctx.fill();
+      }
+
+      // Update positions
+      for (const node of nodes) {
+        node.x += node.vx;
+        node.y += node.vy;
+        if (node.x < 0 || node.x > W) node.vx *= -1;
+        if (node.y < 0 || node.y > H) node.vy *= -1;
+      }
+
+      animRef.current = requestAnimationFrame(draw);
+    }
+
+    draw();
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+      init(canvas);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    return () => {
+      window.removeEventListener("resize", resize);
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+  }, [init]);
+
+  return <canvas ref={canvasRef} className="polygon-bg" />;
+}
 
 
 function Dropdown({ label, icon: Icon, value, onChange, options, disabled }) {
@@ -173,9 +258,8 @@ function DemoForm() {
 
   return (
     <div className="demo-form">
-      <div className="demo-form-eyebrow">Get Expert Guidance</div>
-      <h3>Ready for full DORA compliance?</h3>
-      <p>Book a personalised demo with our regulatory specialists.</p>
+      <h3>Contact Us</h3>
+      <p>Book a personalised demo with our compliance technology.</p>
 
       {status === "success" ? (
         <div className="demo-success">
@@ -285,11 +369,11 @@ Article text: "${article.text}"
 Keep each item under 20 words. Risks = compliance/operational failures. Controls = concrete governance actions.`;
 
     try {
-      const res = await fetch("XXXXXXXXXXX", {
+      const res = await fetch("enter api here", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "XXXXXXXXXX",
+          model: "enter model here",
           max_tokens: 1000,
           messages: [{ role: "user", content: prompt }],
         }),
@@ -307,6 +391,7 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
   /* rendering */
   return (
     <div className="app">
+      <PolygonBackground />
       {/*  header  */}
       <header className="header">
         <div className="header-inner">
@@ -408,7 +493,6 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
               </>
             ) : (
               <>
-                <MdAutoAwesome size={17} />
                 Generate Compliance Analysis
               </>
             )}
@@ -484,7 +568,7 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
           <DemoForm />
 
           <p className="footer">
-            comply2reg · Automated Regulatory Intelligence · EU DORA Compliance Suite
+            comply2reg · EU DORA Compliance
           </p>
         </div>
       </main>
