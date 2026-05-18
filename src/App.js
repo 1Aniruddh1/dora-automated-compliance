@@ -18,7 +18,7 @@ import {
   MdErrorOutline,
 } from "react-icons/md";
 
-const JSON_URL = "/dora_compliance_data.json";
+const JSON_URL = process.env.PUBLIC_URL + "/dora_compliance_data.json";
 
 
 function PolygonBackground() {
@@ -396,7 +396,7 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
       <header className="header">
         <div className="header-inner">
           <img
-            src="/image.png"
+            src={process.env.PUBLIC_URL + "/image.png"}
             alt="Comply2Reg"
             className="header-logo-img"
           />
