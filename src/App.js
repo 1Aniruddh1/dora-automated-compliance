@@ -216,7 +216,7 @@ function Skeleton() {
 // sheetsdb api
 const SHEETSDB_URL = "https://sheetdb.io/api/v1/v3npu5mie2tu6";
 
-function DemoForm() {
+function DemoFormModal({ isOpen, onClose }) {
   const [form, setForm] = useState({ name: "", email: "", org: "", role: "" });
   const [status, setStatus] = useState("idle"); // idle | submitting | success | error
   const [errorMsg, setErrorMsg] = useState("");
@@ -256,66 +256,79 @@ function DemoForm() {
     }
   }
 
+  if (!isOpen) return null;
+
   return (
-    <div className="demo-form">
-      <h3>Contact Us</h3>
-      <p>Book a personalised demo with our compliance technology.</p>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose} aria-label="Close modal">×</button>
+        <div className="demo-form">
+          <span className="demo-form-eyebrow">DEMO REQUEST</span>
+          <h3>Book a Demo</h3>
+          <p>Book a personalised demo with our compliance technology.</p>
 
-      {status === "success" ? (
-        <div className="demo-success">
-          <MdCheckCircle className="demo-success-icon" size={22} />
-          <div>
-            <h4>Request received!</h4>
-            <p>We'll be in touch within one business day.</p>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="demo-form-grid">
-            {fields.map(({ key, placeholder, type }) => (
-              <input
-                key={key}
-                type={type}
-                placeholder={placeholder}
-                value={form[key]}
-                onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
-                className="demo-input"
-                disabled={status === "submitting"}
-              />
-            ))}
-          </div>
-
-          {status === "error" && (
-            <div className="demo-error">
-              <MdErrorOutline size={15} style={{ flexShrink: 0 }} />
-              {errorMsg}
+          {status === "success" ? (
+            <div className="demo-success">
+              <MdCheckCircle className="demo-success-icon" size={22} />
+              <div>
+                <h4>Request received!</h4>
+                <p>We'll be in touch within one business day.</p>
+              </div>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="demo-form-grid">
+                {fields.map(({ key, placeholder, type }) => (
+                  <input
+                    key={key}
+                    type={type}
+                    placeholder={placeholder}
+                    value={form[key]}
+                    onChange={(e) => setForm((p) => ({ ...p, [key]: e.target.value }))}
+                    className="demo-input"
+                    disabled={status === "submitting"}
+                  />
+                ))}
+              </div>
 
-          <button
-            className="demo-submit"
-            onClick={handleSubmit}
-            disabled={status === "submitting" || !form.name || !form.email}
-            type="button"
-          >
-            {status === "submitting" ? (
-              <>
-                <div className="spinner" style={{ width: 14, height: 14 }} />
-                Sending…
-              </>
-            ) : (
-              <>
-                <MdSend size={15} />
-                Book a Demo
-              </>
-            )}
-          </button>
-        </>
-      )}
+              {status === "error" && (
+                <div className="demo-error">
+                  <MdErrorOutline size={15} style={{ flexShrink: 0 }} />
+                  {errorMsg}
+                </div>
+              )}
+
+              <button
+                className="demo-submit"
+                onClick={handleSubmit}
+                disabled={status === "submitting" || !form.name || !form.email}
+                type="button"
+              >
+                {status === "submitting" ? (
+                  <>
+                    <div className="spinner" style={{ width: 14, height: 14 }} />
+                    Sending…
+                  </>
+                ) : (
+                  <>
+                    <MdSend size={15} />
+                    Submit Request
+                  </>
+                )}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
+const getFirstSentence = (text) => {
+  if (!text) return "";
+  const match = text.match(/^[^.!?]+[.!?]/);
+  return match ? match[0] : text;
+};
 
 export default function DORAComplianceTool() {
   const [articles, setArticles] = useState([]);
@@ -326,8 +339,10 @@ export default function DORAComplianceTool() {
   const [regulation, setRegulation] = useState("");
   const [ruleId, setRuleId] = useState("");
 
-  const [analyzing, setAnalyzing] = useState(false);
+  const [displayedArticle, setDisplayedArticle] = useState(null);
   const [result, setResult] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   /* load json*/
   useEffect(() => {
@@ -336,79 +351,54 @@ export default function DORAComplianceTool() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then((data) => { setArticles(data.articles); setDataLoading(false); })
+      .then((data) => {
+        setArticles(data.articles);
+        setDataLoading(false);
+      })
       .catch(() => {
         setDataError(`Could not load ${JSON_URL}. Make sure dora_compliance_data.json is in /public.`);
         setDataLoading(false);
       });
   }, []);
 
-
   const article = articles.find((a) => a.id === ruleId) ?? null;
-  const canAnalyze = !!(region && regulation && ruleId && !dataLoading);
+  const canGenerate = !!(region && regulation && ruleId && !dataLoading);
 
-  const regionOptions = [{ value: "eu", label: "🇪🇺  European Union" }];
+  function handleGenerate() {
+    if (!canGenerate || !article) return;
+    setGenerating(true);
+    setResult(null);
+    setDisplayedArticle(null);
+
+    setTimeout(() => {
+      setDisplayedArticle(article);
+      setResult({ risks: article.risks, controls: article.controls });
+      setGenerating(false);
+    }, 1000);
+  }
+
+  const regionOptions = [{ value: "eu", label: "EU European Union" }];
   const regulationOptions = [{ value: "dora", label: "DORA — Digital Operational Resilience Act" }];
   const ruleOptions = articles.map((a) => ({ value: a.id, label: `${a.label} — ${a.title}` }));
-
-  const steps = [
-    { n: 1, label: "Region", done: !!region },
-    { n: 2, label: "Regulation", done: !!regulation },
-    { n: 3, label: "Article", done: !!ruleId },
-  ];
-
-  /* optional npl integration */
-  async function analyze() {
-    if (!canAnalyze || !article) return;
-    setAnalyzing(true);
-    setResult(null);
-
-    const prompt = `You are a dora compliance expert. For ${article.label} – ${article.title}, return ONLY a JSON object (no markdown, no backticks):
-{"risks":["risk1","risk2","risk3","risk4","risk5"],"controls":["control1","control2","control3","control4","control5"]}
-Article text: "${article.text}"
-Keep each item under 20 words. Risks = compliance/operational failures. Controls = concrete governance actions.`;
-
-    try {
-      const res = await fetch("enter api here", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "enter model here",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }],
-        }),
-      });
-      const data = await res.json();
-      const raw = data.content.map((c) => c.text || "").join("").replace(/```json|```/g, "").trim();
-      setResult(JSON.parse(raw));
-    } catch {
-      setResult({ risks: article.risks, controls: article.controls });
-    } finally {
-      setAnalyzing(false);
-    }
-  }
 
   /* rendering */
   return (
     <div className="app">
       <PolygonBackground />
-      {/*  header  */}
-      <header className="header">
-        <div className="header-inner">
-          <img
-            src={process.env.PUBLIC_URL + "/image.png"}
-            alt="Comply2Reg"
-            className="header-logo-img"
-          />
-          <span className="header-tag">EU · DORA</span>
-        </div>
+      
+      {/* Main Clean Header */}
+      <header className="header-clean">
+        <h1 className="logo-text">DORA <span className="logo-subtext">Explore</span></h1>
+        <p className="header-subtitle-text">
+          Select a regulatory article to instantly view the rule text, the risks it generates, and the governance controls required to meet it.
+        </p>
       </header>
 
-      {/* Main */}
+      {/* Main Content Area */}
       <main className="main">
-        <div className="main-inner">
+        <div className="main-inner-widescreen">
 
-          {/* Error */}
+          {/* Error Banner */}
           {dataError && (
             <div className="error-banner">
               <MdErrorOutline size={18} style={{ flexShrink: 0 }} />
@@ -416,32 +406,8 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
             </div>
           )}
 
-          {/* Step progress */}
-          <div className="steps">
-            {steps.map((s, i) => (
-              <div key={s.n} style={{ display: "flex", alignItems: "center", flex: 1 }}>
-                <div className={`step${s.done ? " done" : ""}`}>
-                  <div className="step-circle">
-                    {s.done ? <MdCheck size={11} /> : s.n}
-                  </div>
-                  <span className="step-label">{s.label}</span>
-                </div>
-                {i < 2 && <div className="step-connector" />}
-              </div>
-            ))}
-          </div>
-
           {/* Selector panel */}
-          <div className="card">
-            <div className="card-header">
-              <div className="card-icon blue">
-                <MdDescription size={15} />
-              </div>
-              <span className="card-title">Select Rule</span>
-              {!dataLoading && articles.length > 0 && (
-                <span className="card-badge blue">{articles.length} articles</span>
-              )}
-            </div>
+          <div className="selector-panel card">
             <div className="card-body">
               {dataLoading ? (
                 <div className="loading-row">
@@ -454,7 +420,11 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
                     label="Region"
                     icon={MdPublic}
                     value={region}
-                    onChange={(v) => { setRegion(v); setRegulation(""); setRuleId(""); setResult(null); }}
+                    onChange={(v) => {
+                      setRegion(v);
+                      setRegulation("");
+                      setRuleId("");
+                    }}
                     options={regionOptions}
                     disabled={false}
                   />
@@ -462,7 +432,10 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
                     label="Regulation"
                     icon={MdBookmark}
                     value={regulation}
-                    onChange={(v) => { setRegulation(v); setRuleId(""); setResult(null); }}
+                    onChange={(v) => {
+                      setRegulation(v);
+                      setRuleId("");
+                    }}
                     options={regulationOptions}
                     disabled={!region}
                   />
@@ -470,7 +443,9 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
                     label="Article"
                     icon={MdArticle}
                     value={ruleId}
-                    onChange={(v) => { setRuleId(v); setResult(null); }}
+                    onChange={(v) => {
+                      setRuleId(v);
+                    }}
                     options={ruleOptions}
                     disabled={!regulation}
                   />
@@ -479,99 +454,123 @@ Keep each item under 20 words. Risks = compliance/operational failures. Controls
             </div>
           </div>
 
-          {/* Analyze button */}
-          <button
-            className="analyze-btn"
-            onClick={analyze}
-            disabled={!canAnalyze || analyzing}
-            type="button"
-          >
-            {analyzing ? (
-              <>
-                <div className="spinner" />
-                Generating analysis…
-              </>
-            ) : (
-              <>
-                Generate Compliance Analysis
-              </>
-            )}
-          </button>
-
-          {/* Article strip */}
-          {article && !analyzing && (
-            <div className="article-strip">
-              <span className="article-label-tag">{article.label}</span>
-              <span className="article-title">{article.title}</span>
-              <span className="article-ref">EU 2022/2554</span>
+          {/* Generate Button */}
+          {!dataLoading && (
+            <div className="generate-btn-container">
+              <button
+                className="generate-dashboard-btn"
+                onClick={handleGenerate}
+                disabled={!canGenerate || generating}
+                type="button"
+              >
+                {generating ? (
+                  <>
+                    <div className="spinner" style={{ marginRight: 8 }} />
+                    Generating Risks and Controls…
+                  </>
+                ) : (
+                  <>
+                    <MdAutoAwesome size={16} style={{ marginRight: 6 }} />
+                    Generate Risks and Controls
+                  </>
+                )}
+              </button>
             </div>
           )}
 
-          {/* Skeleton */}
-          {analyzing && <Skeleton />}
+          {/* Skeleton Loader during generation */}
+          {generating && <Skeleton />}
 
-          {/* Results */}
-          {result && !analyzing && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <ResultCard
-                iconClass="blue"
-                Icon={MdArticle}
-                title="Rule Text"
-                badge="Legal Text"
-                badgeClass="blue"
-                style={{ animationDelay: "0ms" }}
-              >
-                <p style={{ fontSize: 13, lineHeight: 1.75, color: "#334155", margin: 0 }}>
-                  {article?.text}
-                </p>
-              </ResultCard>
+          {/* Three-Column Horizontal Dashboard Layout */}
+          {displayedArticle && result && !generating && (
+            <div className="dashboard-grid">
+              
+              {/* Column 1: Article info, lead paragraph, rule text, CTAs */}
+              <div className="dashboard-col col-left">
+                <div className="article-intro-header">
+                  <span className="badge-article-label">{displayedArticle.label}</span>
+                  <h2 className="article-title-text">{displayedArticle.title}</h2>
+                </div>
+                <p className="article-lead-text">{getFirstSentence(displayedArticle.text)}</p>
+                
+                <ResultCard
+                  iconClass="blue"
+                  Icon={MdArticle}
+                  title="Rule Text"
+                  badge="Legal Text"
+                  badgeClass="blue"
+                  style={{ animationDelay: "0ms" }}
+                >
+                  <p className="rule-text-content">
+                    {displayedArticle.text}
+                  </p>
+                </ResultCard>
+                
+                {/* CTA Action Buttons */}
+                <div className="cta-container">
+                  <button className="btn-cta-blue" onClick={() => setIsDemoModalOpen(true)}>
+                    BOOK A DEMO →
+                  </button>
+                  <a href="mailto:talk2us@comply2reg.com" className="btn-cta-black">
+                    TALK2US@COMPLY2REG.COM
+                  </a>
+                </div>
+              </div>
 
-              <ResultCard
-                iconClass="red"
-                Icon={MdWarning}
-                title="Identified Risks"
-                badge={`${result.risks.length} risks`}
-                badgeClass="red"
-                style={{ animationDelay: "80ms" }}
-              >
-                <FlowList items={result.risks} dotClass="red" />
-              </ResultCard>
+              {/* Column 2: Identified Risks */}
+              <div className="dashboard-col col-risks">
+                <ResultCard
+                  iconClass="red"
+                  Icon={MdWarning}
+                  title="Identified Risks"
+                  badge={`${result.risks.length} risks`}
+                  badgeClass="red"
+                  style={{ animationDelay: "80ms" }}
+                >
+                  <FlowList items={result.risks} dotClass="red" />
+                </ResultCard>
+              </div>
 
-              <ResultCard
-                iconClass="green"
-                Icon={MdCheckCircle}
-                title="Governance Controls"
-                badge={`${result.controls.length} actions`}
-                badgeClass="green"
-                style={{ animationDelay: "160ms" }}
-              >
-                <FlowList items={result.controls} dotClass="green" />
-              </ResultCard>
+              {/* Column 3: Governance Controls */}
+              <div className="dashboard-col col-controls">
+                <ResultCard
+                  iconClass="green"
+                  Icon={MdCheckCircle}
+                  title="Governance Controls"
+                  badge={`${result.controls.length} actions`}
+                  badgeClass="green"
+                  style={{ animationDelay: "160ms" }}
+                >
+                  <FlowList items={result.controls} dotClass="green" />
+                </ResultCard>
+              </div>
+
             </div>
           )}
 
-          {/* empty state */}
-          {!result && !analyzing && (
+          {/* Empty state / placeholder prompt when no generation has occurred */}
+          {!displayedArticle && !generating && !dataLoading && (
             <div className="empty-state">
               <div className="empty-icon">
                 <MdSearch size={24} />
               </div>
-              <h3>Select an article to begin</h3>
+              <h3>Select Options to Begin</h3>
               <p>
                 Choose a region, regulation, and article above,<br />
-                then click "Generate Compliance Analysis."
+                then click "Generate Risks and Controls" to load the analysis.
               </p>
             </div>
           )}
 
-          {/* contact demo form */}
-          <DemoForm />
-
+          {/* Footer branding */}
           <p className="footer">
             comply2reg · EU DORA Compliance
           </p>
         </div>
       </main>
+
+      {/* Booking Form Modal Overlay */}
+      <DemoFormModal isOpen={isDemoModalOpen} onClose={() => setIsDemoModalOpen(false)} />
     </div>
   );
 }
